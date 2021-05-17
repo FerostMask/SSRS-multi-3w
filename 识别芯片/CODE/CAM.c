@@ -259,7 +259,7 @@ void state_machine_enter(void){
 	//	十字、十字丢边
 	//	岔道
 		case 41:
-			act_flag = 31, state_flag = 4, img_color = 0xEFBE;
+			act_flag = 41, state_flag = 4, img_color = 0xEFBE;
 			return;
 	}
 }
@@ -416,7 +416,7 @@ void vertsearch_frok(void){
 //    show_value[4]=sum_right;
 /********** 终点、岔道判断开始 **********/    
     if(abs(cnt_left-cnt_right) < 9 && cnt_left > 5 && cnt_right <25 && cnt_right > 5 && cnt_right <25){
-            state = 31;
+            state = 41;
     }
 }
 /*------------------------------*/

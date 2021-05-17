@@ -102,12 +102,12 @@ struct adcpara adc2;
 /*======================*/
 void Init_para(void){
 //	速度控制
-	speed.direct = 40;
-	speed.bend[0] = 40, speed.bend[1] = 40;
-	speed.ring[0] = 40, speed.ring[1] = 40;
-	speed.ring[2] = 40, speed.ring[3] = 40, speed.ring[4] = 40;
-	speed.cross = 40;
-	speed.fork = 40;
+	speed.direct = 70;
+	speed.bend[0] = 70, speed.bend[1] = 70;
+	speed.ring[0] = 70, speed.ring[1] = 70;
+	speed.ring[2] = 70, speed.ring[3] = 70, speed.ring[4] = 70;
+	speed.cross = 70;
+	speed.fork = 70;
 //	CAM转向
 	cam_steering.Kp = 0.9;
 	cam_steering.Kd = 1.1;	
