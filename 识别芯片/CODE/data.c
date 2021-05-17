@@ -43,7 +43,8 @@ unsigned char state_flag;
 unsigned short img_color = 0xAE9C;
 void(*state_pfc[])(void) = {state_machine_enter, state_machine_bend, state_machine_ring, state_machine_cross, state_machine_fork};
 //  岔道相关
-unsigned char fork_turn_direction; //0 左 1 右
+unsigned char fork_turn_direction, border_top[MT9V03X_W-4]; //0 左 1 右
+unsigned char cnt_left, cnt_right;//数左右倾斜
 /*----------------------*/
 /*	 	 控制模块		*/
 /*======================*/
@@ -54,6 +55,7 @@ short p_target[2];
 short error_flit[8], ctrl_error1, ctrl_error2;
 short spd_slow;
 short spd, rad;
+short rad_temp;
 unsigned char folrow_f = 63;
 char folc_flag, cooling_flag;
 void(*ctrl_pfc[])(void) = {cam_ctrl_direct, cam_ctrl_bend, cam_ctrl_ring, cam_ctrl_cross, cam_ctrl_fork};
@@ -102,12 +104,12 @@ struct adcpara adc2;
 /*======================*/
 void Init_para(void){
 //	速度控制
-	speed.direct = 70;
-	speed.bend[0] = 70, speed.bend[1] = 70;
-	speed.ring[0] = 70, speed.ring[1] = 70;
-	speed.ring[2] = 70, speed.ring[3] = 70, speed.ring[4] = 70;
+	speed.direct = 45;
+	speed.bend[0] = 40, speed.bend[1] = 40;
+	speed.ring[0] = 80, speed.ring[1] = 80;
+	speed.ring[2] = 80, speed.ring[3] = 80, speed.ring[4] = 80;
 	speed.cross = 70;
-	speed.fork = 70;
+	speed.fork = 55;
 //	CAM转向
 	cam_steering.Kp = 0.9;
 	cam_steering.Kd = 1.1;	

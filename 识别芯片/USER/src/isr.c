@@ -57,7 +57,7 @@ void TIM2_IRQHandler (void)
 	if(folc_flag) p_target[0] = folrow_f, p_target[1] = (lefbor[folrow_f]+rigbor[folrow_f])>>1;
 	pos_pid(&cam_steering, 80, p_target[1], 120, -120);
 	uart_putchar(UART_7, cam_steering.rs);
-	spd -= (spd_slow>>1);//动态减速
+//	spd -= (spd_slow>>1);//动态减速
 	uart_putchar(UART_6, spd);
 /*----------------------*/
 /*	 	 误差部分		*/

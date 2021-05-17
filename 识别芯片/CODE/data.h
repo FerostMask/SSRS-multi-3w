@@ -49,7 +49,8 @@ extern unsigned char state, state_temp;
 extern unsigned char state_flag;
 extern void(*state_pfc[])(void);
 //  岔道相关
-extern unsigned char fork_turn_direction; //0 左 1 右
+extern unsigned char fork_turn_direction, border_top[MT9V03X_W-4]; //0 左 1 右
+extern unsigned char cnt_left, cnt_right;//数左右倾斜
 /*----------------------*/
 /*	 	 控制模块		*/
 /*======================*/
@@ -58,6 +59,7 @@ extern short p_target[2];
 extern short error_flit[8], ctrl_error1, ctrl_error2;
 extern short spd_slow;
 extern short spd, rad;
+extern short rad_temp;
 extern unsigned char folrow_f;
 extern char folc_flag, cooling_flag;
 extern void(*ctrl_pfc[])(void);

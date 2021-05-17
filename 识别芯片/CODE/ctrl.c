@@ -42,24 +42,23 @@ void cam_ctrl_ring(void){
 //	控制
 	switch(act_flag){
 		case 21://出环口
-			if(exti_lefcount) p_target[1] = (lvet_trafpoint_col[0]+rigbor[lvet_trafpoint_row[0]])>>1;
-			else p_target[1] = 80;
+//			if(exti_lefcount) p_target[1] = ((lvet_trafpoint_col[0]+rigbor[lvet_trafpoint_row[0]])>>1);
+			p_target[1] = 80;
 			spd = speed.ring[0];
 			folc_flag = 0;
 			break;
 		case 22://入环口
-			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(100>>(spd>>4));
+			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(100>>(spd>>4))+10;
 			spd = speed.ring[1];
 			folc_flag = 0;
 			break;
 		case 23://环内
-			folrow_f = 40;
+			folrow_f = 50;
+			rad_temp = p_target[1];
 			spd = speed.ring[2];
 			break;
 		case 24://出环
-			mp = ((((99+rcut)>>1)+rcut)>>1);
-			slope_temp = (float)(rcut-found_point[2])/found_point[3];
-			p_target[0] = mp, p_target[1] = ((float)(rcut-mp)/slope_temp)+42;
+			p_target[1] = rad_temp;
 			spd = speed.ring[3];
 			folc_flag = 0;
 			break;
@@ -73,19 +72,22 @@ void cam_ctrl_bend(void){
 	unsigned char mp;
 	float slope_temp;
 //	控制
-	spd = speed.bend[0];
 	switch(act_flag){
 		case 11://左转丢边
-			folrow_f = 47;
+			folrow_f = 43;
+			spd = speed.bend[0];
 			break;
 		case 12://右转丢边
-			folrow_f = 47;
+			folrow_f = 43;
+			spd = speed.bend[0];
 			break;
 		case 13://左弯
-			folrow_f = 36;
+			folrow_f = 47;
+			spd = speed.bend[1];
 			break;
 		case 14://右弯
-			folrow_f = 36;
+			folrow_f = 47;
+			spd = speed.bend[1];
 			break;
 	}
 }

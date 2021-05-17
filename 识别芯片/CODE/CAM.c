@@ -71,7 +71,7 @@ void binary_disp(void){
 		ips200_drawpoint(i, topbor[i], 0xFD10);
 //	显示岔道边线
 	for(i = 17; i < cut_fork; i++)
-		ips200_drawpoint(i, topbor[i], 0xA759);
+		ips200_drawpoint(i, border_top[i], 0xA759);
 //	显示状态
 	ips200_showstr(160, 0, "state");
 	ips200_showint16(160, 1, state);
@@ -84,10 +84,10 @@ void binary_disp(void){
 	ips200_drawpoint(p_target[1], p_target[0]+2, 0xED2A);
 	ips200_drawpoint(p_target[1], p_target[0]-2, 0xED2A);
 //	显示值
-//	ips200_showstr(170, 4, "show_value");
-//	ips200_showint16(170, 5, show_value[0]);
-//	ips200_showint16(170, 6, show_value[1]);
-//	ips200_showint16(170, 7, show_value[2]);
+	ips200_showstr(170, 4, "show_value");
+	ips200_showint16(170, 5, show_value[0]);
+	ips200_showint16(170, 6, show_value[1]);
+	ips200_showint16(170, 7, show_value[2]);
 //	ips200_showint16(170, 8, show_value[3]);
 //	ips200_showint16(170, 9, show_value[4]);
 //	显示值 | 浮点型
@@ -111,12 +111,14 @@ void state_machine(void){
 	state_temp = state, state = 0;
 	cut_fork = 0;
 	show_value[0] = yawa;
+	show_value[1] = lef_botrate;//-1700
+	show_value[2] = lef_toprate;//3600
 	switch(act_flag){
 	//	出环检测
-		case 13:
-			if(exti_rigcount > 0) {state = 23; return;}
+		case 23:
+			if(exti_rigcount > 0 && yawa < -60) {state = 23; return;}
 			break;
-		case 14:
+		case 24:
 			if(yawa < -70) {state = 24; return;}
 			break;
 	}
@@ -142,9 +144,10 @@ void state_machine(void){
 						if(found_point[2] > exti_lefp[0]+10)
 							slope_cal(3);
 							if(abs(line_slope_diff) < 120){//判断右边是直线
-								if(lef_botrate < -260 && lef_toprate < 70)
-									if(lef_widrate > 46)
-										{state = 22;return;}
+								if(lef_botrate < -240 && lef_botrate > -1500)
+									if(lef_toprate > -30 && lef_toprate < 1500)
+										if(lef_widrate > 46)
+											{state = 22;return;}
 							//	未检测到入环口，判断是否为出环口
 								lef_toprate = (topbor[0]-topbor[leftop_cut>>1]);//借用变量存储
 								lef_botrate = (topbor[leftop_cut>>1]-topbor[leftop_cut]);
@@ -169,13 +172,14 @@ void state_machine(void){
 void state_machine_fork(void){
 	switch(act_flag){
 		case 41:
-			if(state == 0 && cut_fork_bottom<20 || state != 31)
-				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
+			if(state == 0 && cut_fork_bottom < 20  || state != 41 ){
+                vertsearch_frok();
+                if( cnt_left < 4 || cnt_right < 4 || state!=41)
+                    act_flag = 0, state_flag = 0, img_color = 0xAE9C;
+            }
 			break;
 	}
 }
-
-
 /*------------------------------*/
 /*	    	十字状态机			*/
 /*==============================*/
@@ -190,12 +194,12 @@ void state_machine_ring(void){
 			if(state == 22)
 				act_flag = 22, img_color = 0x8CF6;
 		case 22://入环 -> 环内
-			if(state == 11)
-				act_flag = 23, img_color = 0x46D0;
+			if(state == 11 || state == 13)
+				act_flag = 23, yawa_flag = 1, yawa = 0, img_color = 0x46D0;
 				return;
 		case 23://环内 -> 出环
 			if(state == 23)
-				act_flag = 24, yawa_flag = 1, yawa = 0, img_color = 0xB6DB;
+				act_flag = 24, yawa = 0, img_color = 0xB6DB;
 			return;
 		case 24://出环 -> 环外
 			if(state == 24)
@@ -270,6 +274,7 @@ char slope_cal(char num){
 //	变量定义
 	register char i;
 	unsigned char mp[4];
+	unsigned char line_flag;
 	short slope[2];
 	short angle;
 //	计算斜率
@@ -279,6 +284,12 @@ char slope_cal(char num){
 			mp[0] = ltraf_point_row[exti_leftop];
 			mp[2] = mp[0]+found_point[2] >> 1;
 			mp[1] = (mp[0]+mp[2]) >> 1, mp[3] = mp[2]>>1;
+		//	单调性判断
+			if(rigbor[mp[0]]<rigbor[mp[1]])
+				if(rigbor[mp[1]]<rigbor[mp[2]])
+					if(rigbor[mp[2]]<rigbor[mp[3]])
+						line_flag = 1;
+			if(!line_flag) {line_slope_diff = 300;return;}
 			slope[0] = (float)(rigbor[mp[0]]-rigbor[mp[2]])/(float)(mp[0]-mp[2])*1000;
 			slope[1] = (float)(rigbor[mp[1]]-rigbor[mp[3]])/(float)(mp[1]-mp[3])*1000;
 			line_slope_diff = slope[0]-slope[1];
@@ -330,14 +341,11 @@ void vertsearch_frok(void){
 	unsigned char *p;
 	unsigned char found_flag, view_temp;
 	unsigned char bottom_point, bottom_cut;
-    unsigned char cnt_left=0, cnt_right=0;//数左右倾斜
     uint16 sum_left=0,sum_right=0;
     unsigned char flag[2]={0};
     unsigned char cnt_level_change_points;
-    //  斜率相关
-    char x1, x2, y1, y2;
-    float k1, k2, lef_k, rig_k, error;    
 
+    
 //	**寻找边界基点**
 	cut_fork_bottom = 0, bottom_cut = 0;
 	p = &binary_img[MT9V03X_H-1][8];
@@ -347,7 +355,7 @@ void vertsearch_frok(void){
 		bottom_point = i;
 		break;
 	}
-	if(i < 15 || i > 90) return;
+	if(i < 19 || i > 75) return;
 //  **基点所在行跳变点计数**
     cnt_level_change_points = 0;
     p = &binary_img[i-4][2];
@@ -384,9 +392,8 @@ void vertsearch_frok(void){
 			view_temp = *(p)^*(p+col);
 			for(k = 7; k > -1; k--){
 				if(!((found_flag>>k)&0x01))
-					if((view_temp>>k)&0x01){       
-     
-						topbor[(j<<3)+7-k] = i;
+					if((view_temp>>k)&0x01){     
+						border_top[(j<<3)+7-k] = i;
                         if(i > bottom_cut) bottom_cut = i, cut_fork_bottom = (j<<3)+7-k;
 						if(cut_fork < (j<<3)+7-k) cut_fork =(j<<3)+7-k;
 					}
@@ -398,24 +405,28 @@ void vertsearch_frok(void){
 		if(found_flag != 0xFF) break;	
 	}
     
-    for(i = cut_fork_bottom ; i < 144; i++){//右边
+
+    for(i = cut_fork_bottom ; i < cut_fork; i++){//右边
+        if( border_top[i] < 15 ||  border_top[i] > 75) continue;
     //  间隔小 & 左点在右点的下面
-        j = abs(topbor[i+1] - topbor[i]);
-        if(j < 3 && (topbor[i+1]  < topbor[i]) ) 
+        j = abs(border_top[i+1] - border_top[i]);
+        if(j < 3 && (border_top[i+1]  < border_top[i]) ) 
             {cnt_right++;sum_right+=j*j ;}
     }
     for(i = 16; i < cut_fork_bottom; i++){
-        j = abs(topbor[i+1] - topbor[i]);
-        if(j < 3 && (topbor[i+1] > topbor[i]) )//间隔小 & 左点在右点的上面
+        if( border_top[i] < 15 ||  border_top[i] > 75) continue;
+        j = abs(border_top[i+1] - border_top[i]);
+        if(j < 3 && (border_top[i+1] > border_top[i]) )//间隔小 & 左点在右点的上面
             {cnt_left++;sum_left+=j*j ;}
              
     }
 //    show_value[1]=cnt_left;
-//    show_value[3]=cnt_right;
 //    show_value[2]=sum_left;
+//    show_value[3]=cnt_right;
 //    show_value[4]=sum_right;
 /********** 终点、岔道判断开始 **********/    
-    if(abs(cnt_left-cnt_right) < 9 && cnt_left > 5 && cnt_right <25 && cnt_right > 5 && cnt_right <25){
+    if(abs(sum_left-cnt_left) < 8 && abs(sum_right-cnt_right) < 8 && abs(cnt_left -cnt_right) < 10 && cnt_left > 5 && cnt_right <28 && cnt_right > 5 && cnt_right <28){
+        if(cnt_left > 10 && cnt_right>2 || cnt_right >10 && cnt_left >2 || abs(cnt_left -cnt_right) < 6)
             state = 41;
     }
 }
