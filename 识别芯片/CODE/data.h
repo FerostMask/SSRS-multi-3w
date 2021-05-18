@@ -51,10 +51,11 @@ extern void(*state_pfc[])(void);
 //  岔道相关
 extern unsigned char direction_fork, border_top[MT9V03X_W-4]; //0 左 1 右
 extern unsigned char cnt_left, cnt_right;//数左右倾斜
+extern unsigned short cut_fork_lef, cut_fork_rig;
 /*----------------------*/
 /*	 	 控制模块		*/
 /*======================*/
-extern unsigned short cut_fork, cut_fork_bottom;
+extern unsigned short cut_fork_bottom;
 extern short p_target[2];
 extern short error_flit[8], ctrl_error1, ctrl_error2;
 extern short spd_slow;

@@ -45,12 +45,12 @@ void(*state_pfc[])(void) = {state_machine_enter, state_machine_bend, state_machi
 //  岔道相关
 unsigned char direction_fork, border_top[MT9V03X_W-4]; //0 左 1 右
 unsigned char cnt_left, cnt_right;//数左右倾斜
+unsigned short cut_fork_lef, cut_fork_rig, cut_fork_bottom;
 /*----------------------*/
 /*	 	 控制模块		*/
 /*======================*/
 struct spdpara speed;
 struct pidpara cam_steering;
-unsigned short cut_fork, cut_fork_bottom;
 short p_target[2];
 short error_flit[8], ctrl_error1, ctrl_error2;
 short spd_slow;

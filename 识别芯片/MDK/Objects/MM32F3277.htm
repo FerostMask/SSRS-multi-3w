@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\MM32F3277.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\MM32F3277.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue May 18 23:40:05 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed May 19 04:13:00 2021
 <BR><P>
 <H3>Maximum Stack Usage =       1136 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -914,7 +914,7 @@ Global Symbols
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;camera_tim_etr_init
 </UL>
 
-<P><STRONG><a name="[8e]"></a>binary_disp</STRONG> (Thumb, 678 bytes, Stack size 24 bytes, cam.o(i.binary_disp))
+<P><STRONG><a name="[8e]"></a>binary_disp</STRONG> (Thumb, 712 bytes, Stack size 24 bytes, cam.o(i.binary_disp))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = binary_disp &rArr; ips200_showint16 &rArr; ips200_showchar &rArr; ips200_address_set &rArr; ips200_wr_data16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_wr_data16
@@ -1514,7 +1514,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;state_machine
 </UL>
 
-<P><STRONG><a name="[d5]"></a>state_machine</STRONG> (Thumb, 574 bytes, Stack size 8 bytes, cam.o(i.state_machine))
+<P><STRONG><a name="[d5]"></a>state_machine</STRONG> (Thumb, 616 bytes, Stack size 8 bytes, cam.o(i.state_machine))
 <BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = state_machine &rArr; vertsearch_frok &rArr; vetsearch_fork_support
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vertsearch_frok
@@ -1529,14 +1529,14 @@ Global Symbols
 <P><STRONG><a name="[3]"></a>state_machine_cross</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, cam.o(i.state_machine_cross))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[0]"></a>state_machine_enter</STRONG> (Thumb, 220 bytes, Stack size 8 bytes, cam.o(i.state_machine_enter))
+<P><STRONG><a name="[0]"></a>state_machine_enter</STRONG> (Thumb, 232 bytes, Stack size 8 bytes, cam.o(i.state_machine_enter))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = state_machine_enter &rArr; tim_interrupt_init_ms &rArr; NVIC_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tim_interrupt_init_ms
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[4]"></a>state_machine_fork</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, cam.o(i.state_machine_fork))
+<P><STRONG><a name="[4]"></a>state_machine_fork</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, cam.o(i.state_machine_fork))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
 <P><STRONG><a name="[2]"></a>state_machine_ring</STRONG> (Thumb, 176 bytes, Stack size 8 bytes, cam.o(i.state_machine_ring))
@@ -1654,7 +1654,7 @@ Global Symbols
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vert_leftsearch
 </UL>
 
-<P><STRONG><a name="[ec]"></a>vertsearch_frok</STRONG> (Thumb, 790 bytes, Stack size 48 bytes, cam.o(i.vertsearch_frok))
+<P><STRONG><a name="[ec]"></a>vertsearch_frok</STRONG> (Thumb, 402 bytes, Stack size 32 bytes, cam.o(i.vertsearch_frok))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = vertsearch_frok &rArr; vetsearch_fork_support
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vetsearch_fork_support
@@ -1761,8 +1761,8 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;right_fop_search
 </UL>
 
-<P><STRONG><a name="[f0]"></a>vetsearch_fork_support</STRONG> (Thumb, 260 bytes, Stack size 20 bytes, cam.o(i.vetsearch_fork_support))
-<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = vetsearch_fork_support
+<P><STRONG><a name="[f0]"></a>vetsearch_fork_support</STRONG> (Thumb, 798 bytes, Stack size 36 bytes, cam.o(i.vetsearch_fork_support))
+<BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = vetsearch_fork_support
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vertsearch_frok
 </UL>

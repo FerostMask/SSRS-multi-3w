@@ -72,8 +72,10 @@ void binary_disp(void){
 	for(i = 159; i > rigtop_cut; i--)
 		ips200_drawpoint(i, topbor[i], 0xFD10);
 //	显示岔道边线
-	for(i = 17; i < cut_fork; i++)
-		ips200_drawpoint(i, border_top[i], 0xA759);
+	for(i = cut_fork_bottom; i < cut_fork_rig; i++)//17
+		ips200_drawpoint(i, border_top[i], 0xB20E);
+	for(i = cut_fork_lef; i < cut_fork_bottom; i++)//17
+		ips200_drawpoint(i, border_top[i], 0xED2A);
 	for(i = 0; i < 99; i++)
 		ips200_drawpoint(cut_fork_bottom, i, 0xA759);
 	for(i = 0; i < 159; i++)
@@ -115,10 +117,6 @@ void binary_disp(void){
 void state_machine(void){
 //	初始化
 	state_temp = state, state = 0;
-	cut_fork = 0;
-//	show_value[0] = lef_toprate;
-//	show_value[1] = lef_botrate;
-//	show_value[2] = lef_widrate;
 	switch(act_flag){
 	//	出环检测
 		case 23:
@@ -126,6 +124,17 @@ void state_machine(void){
 			break;
 		case 24:
 			if(yawa < -70) {state = 24; return;}
+			break;
+	//	岔道检测
+		case 41:
+			if(direction_fork){ 
+				if(yawa > 10)
+					{state = 42;return;}
+			}
+			else{
+				if(yawa < -10)
+					{state = 42;return;}
+			}
 			break;
 	}
 	vertsearch_frok();
@@ -179,13 +188,10 @@ void state_machine(void){
 /*==============================*/
 void state_machine_fork(void){
 	switch(act_flag){
-//		case 41:
-//			if(state == 0 && cut_fork_bottom < 20  || state != 41 ){
-//                vertsearch_frok();
-//                if( cnt_left < 4 || cnt_right < 4 || state!=41)
-//                    act_flag = 0, state_flag = 0, img_color = 0xAE9C;
-//            }
-//			break;
+		case 41:
+			if(state == 42)
+				act_flag = 0, yawa_flag = 0, state_flag = 0, img_color = 0xAE9C;
+			break;
 	}
 }
 /*------------------------------*/
@@ -272,6 +278,7 @@ void state_machine_enter(void){
 	//	岔道
 		case 41:
 			act_flag = 41, state_flag = 4, img_color = 0xEFBE;
+			yawa_flag = 1, yawa = 0;
 			return;
 	}
 }
@@ -347,13 +354,16 @@ static unsigned char vetsearch_fork_support(void){
 	register char j, k;
 	unsigned char col = (MT9V03X_W-4)>>3;//换行
 	unsigned char *p;
-	unsigned char search_flag = 0;
+	unsigned char search_flag = 0, bottom_col;
+	unsigned char found_flag, view_temp;
+	unsigned char count_fork = 0;
 //	寻找边界基点
-	cut_fork_bottom = 0, bottom_cut = 0;
+	cut_fork_bottom = 0;
 	p = &binary_img[MT9V03X_H-1][6];
 	for(i = MT9V03X_H-1; i > 0; i--, p-=col){
 		if(*(unsigned long *)p == 0xffffffff && *(unsigned long *)(p+4) == 0xffffffff) continue;
 		bottom_point = i;
+		if(bottom_point < 10) return;
 		p = &binary_img[bottom_point][6];
 	//	检测是否有平行线
 		if((*p>>7)&0x01 == 0)
@@ -362,6 +372,7 @@ static unsigned char vetsearch_fork_support(void){
 		if((*p>>7)&0x01 == 1)
 			if(*(p+7)&0x01 == 0)//右边是平行线
 				search_flag = 2;
+	//	找到最低点
 		switch(search_flag){
 			case 0:
 				for(j = 6; j < 13; j++,p++){
@@ -369,19 +380,69 @@ static unsigned char vetsearch_fork_support(void){
 					if(*p != 0x00)
 						if(*p != 0xff){//左突变
 							for(k = 0; k < 7; k++)
-								if(((*p>>(k+1))&0x01)^((*p>>k)&0x01)){cut_fork_bottom = (j<<3)+6-k;break;}
+								if(((*p>>(k+1))&0x01)^((*p>>k)&0x01)){cut_fork_bottom = (j<<3)+6-k;bottom_col = j;break;}
+								break;
 						}
 					if(*(p+1) != 0x00)
 						if(*(p+1) != 0xff){//右突变
 							for(k = 0; k < 7; k++)
-								if(((*(p+1)>>(k+1))&0x01)^((*(p+1)>>k)&0x01)){cut_fork_bottom = (j<<3)+6-k;break;}
+								if(((*(p+1)>>(k+1))&0x01)^((*(p+1)>>k)&0x01)){cut_fork_bottom = ((j+1)<<3)+6-k;bottom_col = j+1;break;}
+								break;
 						}
 				}
 				break;
 		}
+//	检测单行跳变点
+	p = &binary_img[cut_fork_bottom-7][0];
+	for(j = 0; j < 19; j++,p++){
+    //	一般情况
+        if(*p == 0x00) continue;//全黑
+        if(*p == 0xff) continue;//全白
+		if(*p != 0x00)
+			if(*p != 0xff){//左突变
+				for(k = 0; k < 7; k++)
+					if(((*p>>(k+1))&0x01)^((*p>>k)&0x01)) count_fork++;
+			}
+	}
+	show_value[0] = count_fork;
+//	寻找边界（左、右
+	for(j = bottom_col-1; j > 1; j--){
+		found_flag = 0, p = &binary_img[bottom_point][j];
+		for(i = bottom_point; i > 0; i--, p-=col){
+			view_temp = *(p)^*(p+col);
+			for(k = 7; k > -1; k--){
+				if(!((found_flag>>k)&0x01))
+					if((view_temp>>k)&0x01){     
+						border_top[(j<<3)+7-k] = i;
+						if(cut_fork_lef > (j<<3)+7-k) cut_fork_lef = (j<<3)+7-k;
+					}
+			}
+			found_flag |= view_temp;
+			if(found_flag == 0xFF) break;
+			if(*(p+col) == 0x00) break;
+		}
+		if(found_flag != 0xFF) break;	
+	}
+	for(j = bottom_col; j < 18; j++){
+		found_flag = 0, p = &binary_img[bottom_point][j];
+		for(i = bottom_point; i > 0; i--, p-=col){
+			view_temp = *(p)^*(p+col);
+			for(k = 7; k > -1; k--){
+				if(!((found_flag>>k)&0x01))
+					if((view_temp>>k)&0x01){     
+						border_top[(j<<3)+7-k] = i;
+						if(cut_fork_rig < (j<<3)+7-k) cut_fork_rig = (j<<3)+7-k;
+					}
+			}
+			found_flag |= view_temp;
+			if(found_flag == 0xFF) break;
+			if(*(p+col) == 0x00) break;
+		}
+		if(found_flag != 0xFF) break;	
+	}
 		break;
 	}
-	return 0;
+	return bottom_point;
 }
 /*------------------------------*/
 /*	  	岔道边界点寻找模块		*/
@@ -392,77 +453,27 @@ void vertsearch_frok(void){
 	register char j, k;
 	unsigned char col = (MT9V03X_W-4)>>3;//换行
 	unsigned char *p;
-	unsigned char found_flag, view_temp;
     unsigned char flag[2]={0};
     unsigned char cnt_level_change_points;
     unsigned short sum_left=0,sum_right=0;
-
+//	变量初始化
+	cnt_left = 0, cnt_right = 0;
+	cut_fork_lef = 0, cut_fork_rig = 0;
 //	**寻找边界基点**  //
 	i = vetsearch_fork_support();
 	if(i < 19 || i > 75) return;
-//  **基点所在行跳变点计数**
-    cnt_level_change_points = 0;
-    p = &binary_img[i-4][2];
-    for(j = 2; j < 18; j++,p++){//换列
-    //	一般情况
-        if(*(uint16*)p == 0x0000) continue;//全黑
-        if(*(uint16*)p == 0xffff) continue;//全白
- 		if(*p != 0x00)
-			if(*p != 0xff){//左突变
-				for(k = 7; k > 0; k--){
-//                    if( ( ((*p>>k)&0x01)==1 ) && ( ((*p>>(k-1))&0x01)==0 ) ){flag[0]++;continue;}//白黑跳变
-                    if((((*p>>k)&0x01)==0)&&(((*p>>(k-1))&0x01)==1)){flag[1]++;continue;}//黑白跳变
-                }
-					continue;
-			}
-		if(*(p+1) != 0x00)
-			if(*(p+1) != 0xff){//左突变
-				for(k = 7; k > 0; k--){
-//                    if((((*(p+1)>>k)&0x01)==1)&&(((*(p+1)>>(k-1))&0x01)==0)){flag[0]++;continue;}//白黑跳变
-                    if((((*(p+1)>>k)&0x01)==0)&&(((*(p+1)>>(k-1))&0x01)==1)){flag[1]++;continue;}//黑白跳变
-                }
-					continue;
-			}
-    //	特殊情况
-//        if(*(uint16*)p == 0x00FF){flag[0]++;continue;}//左白右黑跳变
-		if(*(uint16*)p == 0xFF00){flag[1]++;continue;}//左黑右白跳变
-    }
-
-
-
-	for(j = 2; j < 18; j++){
-		found_flag = 0, p = &binary_img[bottom_point][j];
-		for(i = bottom_point+2; i > 0; i--, p-=col ){
-			view_temp = *(p)^*(p+col);
-			for(k = 7; k > -1; k--){
-				if(!((found_flag>>k)&0x01))
-					if((view_temp>>k)&0x01){     
-						border_top[(j<<3)+7-k] = i;
-                        if(i > bottom_cut) bottom_cut = i, cut_fork_bottom = (j<<3)+7-k;
-						if(cut_fork < (j<<3)+7-k) cut_fork =(j<<3)+7-k;
-					}
-			}
-			found_flag |= view_temp;
-			if(found_flag == 0xFF) break;
-			if(*(p+col) == 0x00) break;
-		}
-		if(found_flag != 0xFF) break;	
-	}
-    
-
-    for(i = cut_fork_bottom; i < cut_fork; i++){//右边
+    for(i = cut_fork_bottom; i < cut_fork_rig; i++){//右边
         if( border_top[i] < 15 ||  border_top[i] > 75) continue;
     //  间隔小 & 左点在右点的下面
         j = abs(border_top[i+1] - border_top[i]);
         if(j < 3 && (border_top[i+1]  < border_top[i]) ) 
             {cnt_right++;sum_right+=j*j ;}
     }
-    for(i = 16; i < cut_fork_bottom; i++){
+    for(i = cut_fork_lef; i < cut_fork_bottom; i++){
         if( border_top[i] < 15 ||  border_top[i] > 75) continue;
         j = abs(border_top[i+1] - border_top[i]);
         if(j < 3 && (border_top[i+1] > border_top[i]) )//间隔小 & 左点在右点的上面
             {cnt_left++;sum_left+=j*j ;}
-             
     }
 //    show_value[1]=cnt_left;
 //    show_value[2]=sum_left;
