@@ -17,7 +17,7 @@
 void cam_ctrl_fork(void){
 //	控制
     p_target[0] = topbor[cut_fork_bottom];
-    if(fork_turn_direction){
+    if(direction_fork){
         p_target[1] = (MT9V03X_W + cut_fork_bottom) >> 1;
     }else{
         p_target[1] = cut_fork_bottom >> 1;
@@ -44,13 +44,11 @@ void cam_ctrl_ring(void){
 		case 21://出环口
 			p_target[1] = (lefbor[90]+rigbor[90])>>1;
 			p_target[1] = (p_target[1]+80)>>1;
-			p_target[1] = (p_target[1]+80)>>1;
-			p_target[1] = (p_target[1]+80)>>1;
 			spd = speed.ring[0];
 			folc_flag = 0;
 			break;
 		case 22://入环口
-			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(100>>(spd>>4))+10;
+			p_target[1] = ((leftop_cut+lefbottom_cut)>>1)+(100>>(spd>>4))+15;
 			spd = speed.ring[1];
 			folc_flag = 0;
 			break;

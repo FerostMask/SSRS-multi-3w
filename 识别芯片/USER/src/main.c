@@ -61,9 +61,9 @@ int main(void){
 		menu_display();
 	}
 	Init_para();
-	tim_interrupt_init_ms(TIM_2, 10, 0, 0);
+	tim_interrupt_init_ms(TIM_2, 5, 0, 0);
 //  岔道方向确定
-    fork_turn_direction = 1;//左0 右1
+    direction_fork = 1;//左0 右1
 	ho_flag = 0;//传球标志位
 /*--------------------------------------------------------------*/
 /* 							 循环执行 							*/

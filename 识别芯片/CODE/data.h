@@ -49,7 +49,7 @@ extern unsigned char state, state_temp;
 extern unsigned char state_flag;
 extern void(*state_pfc[])(void);
 //  岔道相关
-extern unsigned char fork_turn_direction, border_top[MT9V03X_W-4]; //0 左 1 右
+extern unsigned char direction_fork, border_top[MT9V03X_W-4]; //0 左 1 右
 extern unsigned char cnt_left, cnt_right;//数左右倾斜
 /*----------------------*/
 /*	 	 控制模块		*/

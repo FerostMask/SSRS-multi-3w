@@ -43,7 +43,7 @@ unsigned char state_flag;
 unsigned short img_color = 0xAE9C;
 void(*state_pfc[])(void) = {state_machine_enter, state_machine_bend, state_machine_ring, state_machine_cross, state_machine_fork};
 //  岔道相关
-unsigned char fork_turn_direction, border_top[MT9V03X_W-4]; //0 左 1 右
+unsigned char direction_fork, border_top[MT9V03X_W-4]; //0 左 1 右
 unsigned char cnt_left, cnt_right;//数左右倾斜
 /*----------------------*/
 /*	 	 控制模块		*/
@@ -108,7 +108,7 @@ void Init_para(void){
 	speed.direct = 45;
 	speed.bend[0] = 40, speed.bend[1] = 40;
 	speed.ring[0] = 80, speed.ring[1] = 80;
-	speed.ring[2] = 80, speed.ring[3] = 90, speed.ring[4] = 80;
+	speed.ring[2] = 80, speed.ring[3] = 80, speed.ring[4] = 80;
 	speed.cross = 70;
 	speed.fork = 55;
 //	CAM转向
