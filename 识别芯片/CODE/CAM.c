@@ -71,7 +71,7 @@ void binary_disp(void){
 		ips200_drawpoint(i, topbor[i], 0xFD10);
 //	显示岔道边线
 	for(i = 17; i < cut_fork; i++)
-		ips200_drawpoint(i, border_top[i], 0xA759);
+		ips200_drawpoint(i, border_top[i], 0xB20E);
 //	显示状态
 	ips200_showstr(160, 0, "state");
 	ips200_showint16(160, 1, state);
@@ -83,13 +83,19 @@ void binary_disp(void){
 	ips200_drawpoint(p_target[1], p_target[0], 0xED2A);
 	ips200_drawpoint(p_target[1], p_target[0]+2, 0xED2A);
 	ips200_drawpoint(p_target[1], p_target[0]-2, 0xED2A);
+//	显示岔道参考点
+	ips200_drawpoint(cut_fork_bottom+2, topbor[cut_fork_bottom], BLUE);
+	ips200_drawpoint(cut_fork_bottom-2, topbor[cut_fork_bottom], BLUE);
+	ips200_drawpoint(cut_fork_bottom, topbor[cut_fork_bottom], BLUE);
+	ips200_drawpoint(cut_fork_bottom, topbor[cut_fork_bottom]+2, BLUE);
+	ips200_drawpoint(cut_fork_bottom, topbor[cut_fork_bottom]-2, BLUE);      
 //	显示值
-	ips200_showstr(170, 4, "show_value");
-	ips200_showint16(170, 5, show_value[0]);
-	ips200_showint16(170, 6, show_value[1]);
-	ips200_showint16(170, 7, show_value[2]);
-//	ips200_showint16(170, 8, show_value[3]);
-//	ips200_showint16(170, 9, show_value[4]);
+	ips200_showstr(170, 5, "show_value");
+	ips200_showint16(170, 6, show_value[0]);
+	ips200_showint16(170, 7, show_value[1]);
+	ips200_showint16(170, 8, show_value[2]);
+	ips200_showint16(170, 9, show_value[3]);
+	ips200_showint16(170, 10, show_value[4]);
 //	显示值 | 浮点型
 //	ips200_showstr(0, 12, "show_flvalue");	
 //	ips200_showfloat(0, 13, show_flvalue[0], 2, 2);
@@ -111,8 +117,8 @@ void state_machine(void){
 	state_temp = state, state = 0;
 	cut_fork = 0;
 	show_value[0] = yawa;
-	show_value[1] = lef_botrate;//-1700
-	show_value[2] = lef_toprate;//3600
+//	show_value[1] = lef_botrate;//-1700
+//	show_value[2] = lef_toprate;//3600
 	switch(act_flag){
 	//	出环检测
 		case 23:
@@ -387,8 +393,8 @@ void vertsearch_frok(void){
 
 
 	for(j = 2; j < 18; j++){
-		found_flag = 0, p = &binary_img[bottom_point][j];
-		for(i = bottom_point+2; i > 0; i--, p-=col ){
+		found_flag = 0, p = &binary_img[bottom_point+5][j];
+		for(i = bottom_point+5; i > 0; i--, p-=col ){
 			view_temp = *(p)^*(p+col);
 			for(k = 7; k > -1; k--){
 				if(!((found_flag>>k)&0x01))
@@ -405,7 +411,7 @@ void vertsearch_frok(void){
 		if(found_flag != 0xFF) break;	
 	}
     
-
+    cnt_left=0,cnt_right=0;
     for(i = cut_fork_bottom ; i < cut_fork; i++){//右边
         if( border_top[i] < 15 ||  border_top[i] > 75) continue;
     //  间隔小 & 左点在右点的下面
@@ -420,13 +426,13 @@ void vertsearch_frok(void){
             {cnt_left++;sum_left+=j*j ;}
              
     }
-//    show_value[1]=cnt_left;
-//    show_value[2]=sum_left;
-//    show_value[3]=cnt_right;
-//    show_value[4]=sum_right;
+    show_value[1]=cnt_left;
+    show_value[2]=sum_left;
+    show_value[3]=cnt_right;
+    show_value[4]=sum_right;
 /********** 终点、岔道判断开始 **********/    
-    if(abs(sum_left-cnt_left) < 8 && abs(sum_right-cnt_right) < 8 && abs(cnt_left -cnt_right) < 10 && cnt_left > 5 && cnt_right <28 && cnt_right > 5 && cnt_right <28){
-        if(cnt_left > 10 && cnt_right>2 || cnt_right >10 && cnt_left >2 || abs(cnt_left -cnt_right) < 6)
+    if(abs(sum_left-cnt_left) < 8 && abs(sum_right-cnt_right) < 8 && abs(cnt_left -cnt_right) < 10 && cnt_left > 5 && cnt_right <30 && cnt_right > 5 && cnt_right < 30){
+        if(cnt_left > 10  || cnt_right >10  || abs(cnt_left -cnt_right) < 6)
             state = 41;
     }
 }
