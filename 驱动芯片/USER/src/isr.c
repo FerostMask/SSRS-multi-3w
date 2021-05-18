@@ -159,12 +159,7 @@ void UART6_IRQHandler(void)
 	if(UART6->ISR & UART_ISR_RX_INTF)												// 串口接收缓冲中断
 	{
 		uart_getchar(UART_6, &buff_get6);
-		if(buff_get6 == 0){
-			spd = 0;
-			steer.rs = 0;
-			motor_act();
-		}
-		else spd = (unsigned char)buff_get6;
+		spd = (unsigned char)buff_get6;
 //		ips200_showint16(0, 1, spd);
 //		ips200_showstr(0, 0, "UART6 GET");
 //		ips200_showint8(0, 1, buff_get6);

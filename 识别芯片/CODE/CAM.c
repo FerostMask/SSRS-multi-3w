@@ -110,16 +110,16 @@ void state_machine(void){
 //	初始化
 	state_temp = state, state = 0;
 	cut_fork = 0;
-	show_value[0] = yawa;
-	show_value[1] = lef_botrate;//-1700
-	show_value[2] = lef_toprate;//3600
+	show_value[0] = lef_toprate;
+	show_value[1] = lef_botrate;
+	show_value[2] = line_slope_diff;
 	switch(act_flag){
 	//	出环检测
 		case 23:
-			if(exti_rigcount > 0 && yawa < -60) {state = 23; return;}
+			if(exti_rigcount > 0 && yawa < -30) {state = 23; return;}
 			break;
 		case 24:
-			if(yawa < -70) {state = 24; return;}
+			if(yawa < -60) {state = 24; return;}
 			break;
 	}
 	vertsearch_frok();
@@ -144,11 +144,12 @@ void state_machine(void){
 						if(found_point[2] > exti_lefp[0]+10)
 							slope_cal(3);
 							if(abs(line_slope_diff) < 120){//判断右边是直线
-								if(lef_botrate < -240 && lef_botrate > -1500)
-									if(lef_toprate > -30 && lef_toprate < 1500)
-										if(lef_widrate > 46)
-											{state = 22;return;}
+								if(lef_botrate < -100 && lef_toprate < 70)
+									if(lef_widrate > 46 && leftop_cut > 33)
+										{state = 22;return;}
 							//	未检测到入环口，判断是否为出环口
+								if(lef_toprate > 70 && lef_botrate > 90)
+									{state = 21; return;}
 								lef_toprate = (topbor[0]-topbor[leftop_cut>>1]);//借用变量存储
 								lef_botrate = (topbor[leftop_cut>>1]-topbor[leftop_cut]);
 								if(lef_toprate*lef_toprate-lef_botrate*lef_botrate < -24)
@@ -320,8 +321,8 @@ void vert_width_analysis(char num, unsigned char end_set){
 				bottom_bias[i] = bottombor[0]*bottombor[0]-bottombor[mp[i+1]]*bottombor[mp[i+1]];
 			}
 			lef_widrate = (wic[0]+wic[1]+wic[2]+wic[3])>>2;
-			lef_toprate = (top_bias[0]+top_bias[2]+top_bias[3]+top_bias[4])>>2;
-			lef_botrate = (bottom_bias[0]+bottom_bias[2]+bottom_bias[3]+bottom_bias[4])>>2;
+			lef_toprate = (top_bias[0]+top_bias[1]+top_bias[2]+top_bias[3])>>2;
+			lef_botrate = (bottom_bias[0]+bottom_bias[1]+bottom_bias[2]+bottom_bias[3])>>2;
 //			show_value[0] = lef_widrate;
 //			show_value[1] = lef_toprate;
 //			show_value[2] = lef_botrate;

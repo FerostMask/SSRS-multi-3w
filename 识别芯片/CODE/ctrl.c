@@ -42,8 +42,10 @@ void cam_ctrl_ring(void){
 //	控制
 	switch(act_flag){
 		case 21://出环口
-//			if(exti_lefcount) p_target[1] = ((lvet_trafpoint_col[0]+rigbor[lvet_trafpoint_row[0]])>>1);
-			p_target[1] = 80;
+			p_target[1] = (lefbor[90]+rigbor[90])>>1;
+			p_target[1] = (p_target[1]+80)>>1;
+			p_target[1] = (p_target[1]+80)>>1;
+			p_target[1] = (p_target[1]+80)>>1;
 			spd = speed.ring[0];
 			folc_flag = 0;
 			break;
@@ -58,7 +60,7 @@ void cam_ctrl_ring(void){
 			spd = speed.ring[2];
 			break;
 		case 24://出环
-			p_target[1] = rad_temp;
+			p_target[1] = rad_temp-5;
 			spd = speed.ring[3];
 			folc_flag = 0;
 			break;

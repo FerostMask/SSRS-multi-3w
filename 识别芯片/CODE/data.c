@@ -85,6 +85,7 @@ void(*menu_pfc[])(unsigned char) = {menu_select, menu2_select};
 unsigned char subuff_num = 0;
 unsigned char subuff_arr[3];
 unsigned short subuff_ranging;
+unsigned char ho_flag;
 /*----------------------*/
 /*	 	 串口通信		*/
 /*======================*/
@@ -107,7 +108,7 @@ void Init_para(void){
 	speed.direct = 45;
 	speed.bend[0] = 40, speed.bend[1] = 40;
 	speed.ring[0] = 80, speed.ring[1] = 80;
-	speed.ring[2] = 80, speed.ring[3] = 80, speed.ring[4] = 80;
+	speed.ring[2] = 80, speed.ring[3] = 90, speed.ring[4] = 80;
 	speed.cross = 70;
 	speed.fork = 55;
 //	CAM转向

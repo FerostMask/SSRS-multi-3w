@@ -94,6 +94,7 @@ extern struct pidpara cam_steering;
 extern unsigned char subuff_num;
 extern unsigned char subuff_arr[3];
 extern unsigned short subuff_ranging;
+extern unsigned char ho_flag;
 /*----------------------*/
 /*	 	 ´®¿ÚÍ¨ÐÅ		*/
 /*======================*/

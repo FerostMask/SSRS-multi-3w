@@ -56,6 +56,8 @@ void TIM2_IRQHandler (void)
 	ctrl_pfc[state_flag]();
 	if(folc_flag) p_target[0] = folrow_f, p_target[1] = (lefbor[folrow_f]+rigbor[folrow_f])>>1;
 	pos_pid(&cam_steering, 80, p_target[1], 120, -120);
+	if(ho_flag == 1) spd = 30;
+	if(ho_flag == 2) spd = 0;
 	uart_putchar(UART_7, cam_steering.rs);
 //	spd -= (spd_slow>>1);//动态减速
 	uart_putchar(UART_6, spd);
@@ -78,8 +80,8 @@ void TIM3_IRQHandler (void)
 {
 	uint32 state = TIM3->SR;														// 读取中断状态
 	TIM3->SR &= ~state;																// 清空中断状态
-//	代码编写区域
-	cooling_flag = 0;//状态冷却
+//	状态冷却
+	cooling_flag = 0;
 //	脆弱状态
 	if(act_flag_temp == act_flag) act_flag = 0, state_flag = 0, img_color = 0xAE9C;
 	fragile_flag = 0;
@@ -143,6 +145,9 @@ void UART3_IRQHandler(void)
 	}
 	if(UART3->ISR & UART_ISR_RX_INTF)												// 串口接收缓冲中断
 	{
+	/*----------------------*/
+	/*	 	 有来有去		*/
+	/*======================*/
 		uart_getchar(UART_3, &subuff_arr[subuff_num]);
 		if(subuff_arr[0]!=0xA5) subuff_num = 0;
 		else subuff_num++;
@@ -152,6 +157,8 @@ void UART3_IRQHandler(void)
 //			ips200_showstr(0, 0, "range:");
 //			ips200_showuint16(0, 1, subuff_ranging);
 		}
+		if(subuff_ranging < 400) ho_flag = 1;
+		if(subuff_ranging < 260) ho_flag = 2;
 		UART3->ICR |= UART_ICR_RXICLR;												// 清除中断标志位
 	}
 }
