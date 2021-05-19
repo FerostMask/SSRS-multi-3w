@@ -48,10 +48,15 @@ void Init_motor(void){
 /*==============================*/
 char core_select(void){
 	gpio_init(D0, GPI, GPIO_LOW, GPI_FLOATING_IN);
+	gpio_init(D1, GPI, GPIO_LOW, GPI_FLOATING_IN);
 	gpio_init(D2, GPI, GPIO_LOW, GPI_FLOATING_IN);
 	ips200_showstr(20, 7, "Press Button to Continue ->");
 	while(1){
 		if(!gpio_get(D0)) return 1;
+		if(!gpio_get(D1)){ 
+			ips200_clear(0x00);
+			return 0;
+		}
 		if(!gpio_get(D2)){ 
 			ips200_clear(WHITE);
 			logo_display200();

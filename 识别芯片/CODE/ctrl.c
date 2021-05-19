@@ -62,7 +62,7 @@ void cam_ctrl_ring(void){
 			spd = speed.ring[2];
 			break;
 		case 24://³ö»·
-			p_target[1] = rad_temp-5;
+			p_target[1] = rad_temp;
 			spd = speed.ring[3];
 			folc_flag = 0;
 			break;

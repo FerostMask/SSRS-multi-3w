@@ -52,7 +52,7 @@ void TIM2_IRQHandler (void)
 /*----------------------*/
 /*	 	 循迹部分		*/
 /*======================*/
-	spd = 60, folc_flag = 1;
+	spd = 60, folc_flag = 1, folrow_f = 53;
 	ctrl_pfc[state_flag]();
 	if(folc_flag) p_target[0] = folrow_f, p_target[1] = (lefbor[folrow_f]+rigbor[folrow_f])>>1;
 	pos_pid(&cam_steering, 80, p_target[1], 120, -120);
@@ -154,11 +154,11 @@ void UART3_IRQHandler(void)
 		if(subuff_num == 3){
 			subuff_num = 0;
 			subuff_ranging = subuff_arr[1] << 8 | subuff_arr[2];
+			if(subuff_ranging < 400 && subuff_ranging > 260) ho_flag = 1;
+			if(subuff_ranging < 260 && subuff_ranging > 200) {ho_flag = 2;uart_rx_irq(UART_3, 0);}//停车并关闭有来有去
 //			ips200_showstr(0, 0, "range:");
 //			ips200_showuint16(0, 1, subuff_ranging);
 		}
-		if(subuff_ranging < 400) ho_flag = 1;
-		if(subuff_ranging < 260) ho_flag = 2;
 		UART3->ICR |= UART_ICR_RXICLR;												// 清除中断标志位
 	}
 }

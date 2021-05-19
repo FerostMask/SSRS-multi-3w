@@ -123,7 +123,7 @@ void state_machine(void){
 			if(exti_rigcount > 0 && yawa < -30) {state = 23; return;}
 			break;
 		case 24:
-			if(yawa < -70) {state = 24; return;}
+			if(yawa < -65) {state = 24; return;}
 			break;
 	//	岔道检测
 		case 41:
@@ -137,6 +137,7 @@ void state_machine(void){
 			}
 			break;
 	}
+	vetsearch_fork_support();
 	vertsearch_frok();
 	if(state == 41) return;
 //	检测赛道类型
@@ -188,6 +189,13 @@ void state_machine(void){
 /*==============================*/
 void state_machine_fork(void){
 	switch(act_flag){
+//		case 41:
+//			if(state == 0 && cut_fork_bottom < 20  || state != 41 ){
+//                vertsearch_frok();
+//                if( cnt_left < 4 || cnt_right < 4 || state!=41)
+//                    act_flag = 0,  yawa_flag = 0, state_flag = 0, img_color = 0xAE9C;
+//            }
+//			break;
 		case 41:
 			if(state == 42)
 				act_flag = 0, yawa_flag = 0, state_flag = 0, img_color = 0xAE9C;
@@ -278,6 +286,7 @@ void state_machine_enter(void){
 	//	岔道
 		case 41:
 			act_flag = 41, state_flag = 4, img_color = 0xEFBE;
+			uart_rx_irq(UART_3, 1);//启用有来有去
 			yawa_flag = 1, yawa = 0;
 			return;
 	}
@@ -348,7 +357,7 @@ void vert_width_analysis(char num, unsigned char end_set){
 /*------------------------------*/
 /*	  	岔道边界点辅助模块		*/
 /*==============================*/
-static unsigned char vetsearch_fork_support(void){
+void vetsearch_fork_support(void){
 //	变量定义
 	register unsigned char i;
 	register char j, k;
@@ -357,6 +366,8 @@ static unsigned char vetsearch_fork_support(void){
 	unsigned char search_flag = 0, bottom_col;
 	unsigned char found_flag, view_temp;
 	unsigned char count_fork = 0;
+//	变量初始化
+	cut_fork_lef = 0, cut_fork_rig = 0;
 //	寻找边界基点
 	cut_fork_bottom = 0;
 	p = &binary_img[MT9V03X_H-1][6];
@@ -394,7 +405,7 @@ static unsigned char vetsearch_fork_support(void){
 		}
 //	检测单行跳变点
 	p = &binary_img[cut_fork_bottom-7][0];
-	for(j = 0; j < 19; j++,p++){
+	for(j = 0; j < 20; j++,p++){
     //	一般情况
         if(*p == 0x00) continue;//全黑
         if(*p == 0xff) continue;//全白
@@ -408,7 +419,7 @@ static unsigned char vetsearch_fork_support(void){
 //	寻找边界（左、右
 	for(j = bottom_col-1; j > 1; j--){
 		found_flag = 0, p = &binary_img[bottom_point][j];
-		for(i = bottom_point; i > 0; i--, p-=col){
+		for(i = bottom_point; i > 10; i--, p-=col){
 			view_temp = *(p)^*(p+col);
 			for(k = 7; k > -1; k--){
 				if(!((found_flag>>k)&0x01))
@@ -425,7 +436,7 @@ static unsigned char vetsearch_fork_support(void){
 	}
 	for(j = bottom_col; j < 18; j++){
 		found_flag = 0, p = &binary_img[bottom_point][j];
-		for(i = bottom_point; i > 0; i--, p-=col){
+		for(i = bottom_point; i > 10; i--, p-=col){
 			view_temp = *(p)^*(p+col);
 			for(k = 7; k > -1; k--){
 				if(!((found_flag>>k)&0x01))
@@ -442,7 +453,6 @@ static unsigned char vetsearch_fork_support(void){
 	}
 		break;
 	}
-	return bottom_point;
 }
 /*------------------------------*/
 /*	  	岔道边界点寻找模块		*/
@@ -453,15 +463,12 @@ void vertsearch_frok(void){
 	register char j, k;
 	unsigned char col = (MT9V03X_W-4)>>3;//换行
 	unsigned char *p;
-    unsigned char flag[2]={0};
     unsigned char cnt_level_change_points;
     unsigned short sum_left=0,sum_right=0;
 //	变量初始化
 	cnt_left = 0, cnt_right = 0;
-	cut_fork_lef = 0, cut_fork_rig = 0;
 //	**寻找边界基点**  //
-	i = vetsearch_fork_support();
-	if(i < 19 || i > 75) return;
+	if(bottom_point < 19 || bottom_point > 75) return;
     for(i = cut_fork_bottom; i < cut_fork_rig; i++){//右边
         if( border_top[i] < 15 ||  border_top[i] > 75) continue;
     //  间隔小 & 左点在右点的下面

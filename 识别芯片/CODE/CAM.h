@@ -18,6 +18,7 @@ void state_machine_bend(void);
 void state_machine_enter(void);
 char slope_cal(char num);
 void vert_slope_cal(char num);
+void vetsearch_fork_support(void);
 void vertsearch_frok(void);
 void border_vertical_leftsearch(void);
 void border_vertical_rightsearch(void);
