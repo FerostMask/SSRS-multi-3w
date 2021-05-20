@@ -62,7 +62,7 @@ int main(void){
 	Init_para();
 	tim_interrupt_init_ms(TIM_2, 5, 0, 0);
 //  岔道方向确定
-    direction_fork = 1;//左0 右1
+    direction_fork = 0;//左0 右1
 	ho_flag = 0, subuff_ranging = 8600;//传球标志位
 /*--------------------------------------------------------------*/
 /* 							 循环执行 							*/

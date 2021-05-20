@@ -22,10 +22,6 @@ void cam_ctrl_fork(void){
     }else{
         p_target[1] = cut_fork_bottom >> 1;
     }
-//	if(direction_fork)
-//		p_target[1] = 90;
-//	else
-//		p_target[0] = 70;
 	spd = speed.fork;
 	folc_flag = 0;
 }
@@ -78,19 +74,19 @@ void cam_ctrl_bend(void){
 //	¿ØÖÆ
 	switch(act_flag){
 		case 11://×ó×ª¶ª±ß
-			folrow_f = 43;
+			folrow_f = 55;
 			spd = speed.bend[0];
 			break;
 		case 12://ÓÒ×ª¶ª±ß
-			folrow_f = 43;
+			folrow_f = 55;
 			spd = speed.bend[0];
 			break;
 		case 13://×óÍä
-			folrow_f = 47;
+			folrow_f = 50;
 			spd = speed.bend[1];
 			break;
 		case 14://ÓÒÍä
-			folrow_f = 47;
+			folrow_f = 50;
 			spd = speed.bend[1];
 			break;
 	}

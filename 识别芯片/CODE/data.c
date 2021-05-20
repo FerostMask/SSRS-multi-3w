@@ -106,7 +106,7 @@ struct adcpara adc2;
 void Init_para(void){
 //	ËÙ¶È¿ØÖÆ
 	speed.direct = 65;
-	speed.bend[0] = 70, speed.bend[1] = 70;
+	speed.bend[0] = 70, speed.bend[1] = 30;
 	speed.ring[0] = 70, speed.ring[1] = 70;
 	speed.ring[2] = 70, speed.ring[3] = 70, speed.ring[4] = 60;
 	speed.cross = 70;

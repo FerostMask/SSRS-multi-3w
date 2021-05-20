@@ -125,20 +125,9 @@ void state_machine(void){
 		case 24:
 			if(yawa < -65) {state = 24; return;}
 			break;
-	//	岔道检测
-		case 41:
-			if(direction_fork){ 
-				if(yawa > 10)
-					{state = 42;return;}
-			}
-			else{
-				if(yawa < -10)
-					{state = 42;return;}
-			}
-			break;
 	}
 	vetsearch_fork_support();
-	vertsearch_frok();
+	if(cut_fork_rig) vertsearch_frok();
 	if(state == 41) return;
 //	检测赛道类型
 	if(!exti_lefcount)
@@ -189,16 +178,12 @@ void state_machine(void){
 /*==============================*/
 void state_machine_fork(void){
 	switch(act_flag){
-//		case 41:
-//			if(state == 0 && cut_fork_bottom < 20  || state != 41 ){
-//                vertsearch_frok();
-//                if( cnt_left < 4 || cnt_right < 4 || state!=41)
-//                    act_flag = 0,  yawa_flag = 0, state_flag = 0, img_color = 0xAE9C;
-//            }
-//			break;
 		case 41:
-			if(state == 42)
-				act_flag = 0, yawa_flag = 0, state_flag = 0, img_color = 0xAE9C;
+			if(state == 0 && cut_fork_bottom < 20  || state != 41 ){
+                vertsearch_frok();
+                if( cnt_left < 4 || cnt_right < 4 || state!=41)
+                    act_flag = 0, state_flag = 0, img_color = 0xAE9C;
+            }
 			break;
 	}
 }
@@ -238,18 +223,26 @@ void state_machine_ring(void){
 void state_machine_bend(void){
 	switch(act_flag){
 		case 11:
+			if(state==13)//丢边转换
+				{act_flag = 13, img_color = 0x7EFE;return;}
 			if(state!=11)
 				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
 			return;
 		case 12:
+			if(state==14)
+				{act_flag = 14, img_color = 0x7EFE;return;}
 			if(state!=12)
 				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
 			return;
 		case 13:
+			if(state==13)
+				{act_flag = 11, img_color = 0x6DDD;return;}
 			if(state!=13)
 				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
 			return;
 		case 14:
+			if(state==12)
+				{act_flag = 12, img_color = 0x6DDD;return;}
 			if(state!=14)
 				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
 			return;
@@ -287,7 +280,6 @@ void state_machine_enter(void){
 		case 41:
 			act_flag = 41, state_flag = 4, img_color = 0xEFBE;
 			uart_rx_irq(UART_3, 1);//启用有来有去
-			yawa_flag = 1, yawa = 0;
 			return;
 	}
 }
@@ -367,7 +359,7 @@ void vetsearch_fork_support(void){
 	unsigned char found_flag, view_temp;
 	unsigned char count_fork = 0;
 //	变量初始化
-	cut_fork_lef = 0, cut_fork_rig = 0;
+	cut_fork_lef = 159, cut_fork_rig = 0;
 //	寻找边界基点
 	cut_fork_bottom = 0;
 	p = &binary_img[MT9V03X_H-1][6];
