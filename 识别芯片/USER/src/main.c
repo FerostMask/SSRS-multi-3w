@@ -51,6 +51,7 @@ int main(void){
 	uart_init(UART_6, 115200, UART6_TX_C06, UART6_RX_C07);
 	uart_init(UART_3, 115200, UART3_TX_B10, UART3_RX_B11);
 	uart_rx_irq(UART_6, 1);
+	uart_rx_irq(UART_7, 1);
 /*----------------------*/
 /*	 	 用户初始化		*/
 /*======================*/
@@ -62,7 +63,7 @@ int main(void){
 	Init_para();
 	tim_interrupt_init_ms(TIM_2, 5, 0, 0);
 //  岔道方向确定
-    direction_fork = 0;//左0 右1
+    direction_fork = 1;//左0 右1
 	ho_flag = 0, subuff_ranging = 8600;//传球标志位
 /*--------------------------------------------------------------*/
 /* 							 循环执行 							*/

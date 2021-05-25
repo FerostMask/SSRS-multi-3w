@@ -45,6 +45,7 @@ int main(void){
 	uart_init(UART_6, 115200, UART6_TX_C06, UART6_RX_C07);
 	uart_rx_irq(UART_7, 1);
 	uart_rx_irq(UART_6, 1);
+	uart_rx_irq(UART_4, 1);
 /*----------------------*/
 /*	 	 用户初始化		*/
 /*======================*/
@@ -55,7 +56,7 @@ int main(void){
 		menu_display();
 	}
 	tim_interrupt_init_us(TIM_2, 500, 0, 0);
-	tim_interrupt_init_ms(TIM_7, 50, 0, 0);
+	tim_interrupt_init_ms(TIM_7, 25, 0, 0);
 /*--------------------------------------------------------------*/
 /* 							 循环执行 							*/
 /*==============================================================*/	

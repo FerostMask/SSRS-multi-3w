@@ -87,6 +87,8 @@ extern void(*menu_pfc[])(unsigned char);
 /*	 	 通信模块		*/
 /*======================*/
 extern unsigned char buff_get6, buff_get7;
+extern unsigned char subuff_num;
+extern unsigned char subuff_arr[3];
 /*------------------------------------------------------*/ 
 /* 						函数声明 						*/
 /*======================================================*/

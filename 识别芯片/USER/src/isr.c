@@ -154,10 +154,10 @@ void UART3_IRQHandler(void)
 		if(subuff_num == 3){
 			subuff_num = 0;
 			subuff_ranging = subuff_arr[1] << 8 | subuff_arr[2];
-			if(subuff_ranging < 400 && subuff_ranging > 260) ho_flag = 1;
-			if(subuff_ranging < 260 && subuff_ranging > 200) {ho_flag = 2;uart_rx_irq(UART_3, 0);}//停车并关闭有来有去
-//			ips200_showstr(0, 0, "range:");
-//			ips200_showuint16(0, 1, subuff_ranging);
+			if(ho_flag == 0)
+				if(subuff_ranging < 400 && subuff_ranging > 260) ho_flag = 1;
+			if(ho_flag == 1)
+				if(subuff_ranging < 260 && subuff_ranging > 200) {ho_flag = 2;uart_rx_irq(UART_3, 0);}//停车并关闭有来有去
 		}
 		UART3->ICR |= UART_ICR_RXICLR;												// 清除中断标志位
 	}
@@ -210,6 +210,8 @@ void UART7_IRQHandler(void)
 	if(UART7->ISR & UART_ISR_RX_INTF)												// 串口接收缓冲中断
 	{
 		UART7->ICR |= UART_ICR_RXICLR;												// 清除中断标志位
+		uart_getchar(UART_7, &buff_get7);
+		if(buff_get7 == 255) ho_flag = 0;
 	}
 }
 

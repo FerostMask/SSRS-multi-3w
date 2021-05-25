@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\MM32F3277.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\MM32F3277.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu May 20 19:15:51 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue May 25 13:58:03 2021
 <BR><P>
 <H3>Maximum Stack Usage =       1136 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -858,7 +858,7 @@ Global Symbols
 <P><STRONG><a name="[38]"></a>UART2_IRQHandler</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, isr.o(i.UART2_IRQHandler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mm32f327x_keil.o(RESET)
 </UL>
-<P><STRONG><a name="[39]"></a>UART3_IRQHandler</STRONG> (Thumb, 184 bytes, Stack size 8 bytes, isr.o(i.UART3_IRQHandler))
+<P><STRONG><a name="[39]"></a>UART3_IRQHandler</STRONG> (Thumb, 198 bytes, Stack size 8 bytes, isr.o(i.UART3_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = UART3_IRQHandler &rArr; uart_rx_irq &rArr; nvic_init &rArr; NVIC_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_rx_irq
@@ -879,7 +879,11 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mm32f327x_keil.o(RESET)
 </UL>
-<P><STRONG><a name="[52]"></a>UART7_IRQHandler</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, isr.o(i.UART7_IRQHandler))
+<P><STRONG><a name="[52]"></a>UART7_IRQHandler</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, isr.o(i.UART7_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = UART7_IRQHandler
+</UL>
+<BR>[Calls]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_getchar
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mm32f327x_keil.o(RESET)
 </UL>
 <P><STRONG><a name="[53]"></a>UART8_IRQHandler</STRONG> (Thumb, 86 bytes, Stack size 8 bytes, isr.o(i.UART8_IRQHandler))
@@ -951,19 +955,25 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[6]"></a>cam_ctrl_bend</STRONG> (Thumb, 90 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_bend))
+<P><STRONG><a name="[6]"></a>cam_ctrl_bend</STRONG> (Thumb, 164 bytes, Stack size 16 bytes, ctrl.o(i.cam_ctrl_bend))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = cam_ctrl_bend
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
 <P><STRONG><a name="[8]"></a>cam_ctrl_cross</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_cross))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[5]"></a>cam_ctrl_direct</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_direct))
+<P><STRONG><a name="[5]"></a>cam_ctrl_direct</STRONG> (Thumb, 120 bytes, Stack size 16 bytes, ctrl.o(i.cam_ctrl_direct))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = cam_ctrl_direct
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
 <P><STRONG><a name="[9]"></a>cam_ctrl_fork</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_fork))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[7]"></a>cam_ctrl_ring</STRONG> (Thumb, 170 bytes, Stack size 0 bytes, ctrl.o(i.cam_ctrl_ring))
+<P><STRONG><a name="[7]"></a>cam_ctrl_ring</STRONG> (Thumb, 468 bytes, Stack size 16 bytes, ctrl.o(i.cam_ctrl_ring))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = cam_ctrl_ring
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
 <P><STRONG><a name="[9b]"></a>camera_dma_init</STRONG> (Thumb, 122 bytes, Stack size 56 bytes, zf_camera.o(i.camera_dma_init))
@@ -1253,7 +1263,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[54]"></a>main</STRONG> (Thumb, 232 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[54]"></a>main</STRONG> (Thumb, 242 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 712<LI>Call Chain = main &rArr; menu_display &rArr; info
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
@@ -1515,7 +1525,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;state_machine
 </UL>
 
-<P><STRONG><a name="[d5]"></a>state_machine</STRONG> (Thumb, 580 bytes, Stack size 8 bytes, cam.o(i.state_machine))
+<P><STRONG><a name="[d5]"></a>state_machine</STRONG> (Thumb, 656 bytes, Stack size 8 bytes, cam.o(i.state_machine))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = state_machine &rArr; slope_cal &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vetsearch_fork_support
@@ -1528,10 +1538,10 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>state_machine_bend</STRONG> (Thumb, 228 bytes, Stack size 0 bytes, cam.o(i.state_machine_bend))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[3]"></a>state_machine_cross</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, cam.o(i.state_machine_cross))
+<P><STRONG><a name="[3]"></a>state_machine_cross</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, cam.o(i.state_machine_cross))
 <BR>[Address Reference Count : 1]<UL><LI> data.o(.data)
 </UL>
-<P><STRONG><a name="[0]"></a>state_machine_enter</STRONG> (Thumb, 228 bytes, Stack size 8 bytes, cam.o(i.state_machine_enter))
+<P><STRONG><a name="[0]"></a>state_machine_enter</STRONG> (Thumb, 360 bytes, Stack size 8 bytes, cam.o(i.state_machine_enter))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = state_machine_enter &rArr; tim_interrupt_init_ms &rArr; NVIC_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tim_interrupt_init_ms
@@ -1604,7 +1614,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[88]"></a>uart_getchar</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, zf_uart.o(i.uart_getchar))
-<BR><BR>[Called By]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART6_IRQHandler
+<BR><BR>[Called By]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART7_IRQHandler
+<LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART6_IRQHandler
 <LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART3_IRQHandler
 </UL>
 
@@ -1656,7 +1667,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;border_vertical_rightsearch
 </UL>
 
-<P><STRONG><a name="[f0]"></a>vert_width_analysis</STRONG> (Thumb, 322 bytes, Stack size 60 bytes, cam.o(i.vert_width_analysis))
+<P><STRONG><a name="[f0]"></a>vert_width_analysis</STRONG> (Thumb, 626 bytes, Stack size 60 bytes, cam.o(i.vert_width_analysis))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = vert_width_analysis
 </UL>
 <BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vert_rightsearch

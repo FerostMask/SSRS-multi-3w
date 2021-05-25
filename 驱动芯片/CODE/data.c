@@ -62,6 +62,8 @@ void(*menu_pfc[])(unsigned char) = {menu_select, menu2_select};
 /*	 	 通信模块		*/
 /*======================*/
 unsigned char buff_get6, buff_get7;
+unsigned char subuff_num = 0;
+unsigned char subuff_arr[3];
 /*--------------------------------------------------------------*/
 /* 							 函数定义 							*/
 /*==============================================================*/
@@ -73,7 +75,7 @@ void Init_para(void){
 //	左轮转向
 	lmor.alpha = 0.15;
 	lmor.Kp = 30;
-	lmor.Ki = 0.45;
+	lmor.Ki = 0.75;
 	lmor.Kd = 0;
 	lmor.I = 0;
 	lmor.e1 = 0, lmor.e2 = 0, lmor.e3 = 0;
@@ -81,16 +83,16 @@ void Init_para(void){
 //	右轮转向
 	rmor.alpha = 0.15;
 	rmor.Kp = 30;
-	rmor.Ki = 0.45;
+	rmor.Ki = 0.75;
 	rmor.Kd = 0;
 	rmor.I = 0;
 	rmor.e1 = 0, rmor.e2 = 0, rmor.e3 = 0;
 	rmor.rs = 0;	
 //	转向
 	steer.alpha = 0.1;
-	steer.Kp = 24;//反应快慢 | 超调
+	steer.Kp = 2;//反应快慢 | 超调
 	steer.Ki = 0;//反应力度
-	steer.Kd = 6.4;
+	steer.Kd = 1.2;
 	steer.I = 0;
 	steer.e1 = 0, steer.e2 = 0, steer.e3 = 0;
 	steer.rs = 0;

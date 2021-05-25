@@ -119,13 +119,30 @@ void state_machine(void){
 	state_temp = state, state = 0;
 	switch(act_flag){
 	//	出环检测
-		case 23:
+		case 23://环内 -> 出环前
 			if(exti_rigcount > 0 && yawa < -30) {state = 23; return;}
 			break;
-		case 24:
-			if(yawa < -65) {state = 24; return;}
+		case 24://出环前 -> 出环后
+			if(yawa < -55) {state = 24; return;}
+			if(((lefbor[30]+rigbor[30])>>1) == 80) {state = 24; return;}
+			break;
+		case 28:
+			if(exti_lefcount > 0 && yawa > 30) {state = 28; return;}
+			break;
+		case 29:
+			if(yawa > 55) {state = 29; return;}
+	//	出十字检测
+		case 31:
+			if(found_point[0] < 60 && found_point[2] < 60) {state = 32; return;}
 			break;
 	}
+//	检测赛道类型
+	if(exti_lefcount)
+		if(exti_rigcount){//两边都有出口 | 十字 | 岔道
+			if(lef_widrate < 20 || rig_widrate < 20)
+				if(abs(exti_lefp[0] - exti_rigp[0]) < 10)
+					{state = 31;return;}
+		}
 	vetsearch_fork_support();
 	if(cut_fork_rig) vertsearch_frok();
 	if(state == 41) return;
@@ -150,16 +167,15 @@ void state_machine(void){
 							slope_cal(3);
 							if(abs(line_slope_diff) < 120){//判断右边是直线
 								if(lef_botrate < -100 && lef_toprate < 70)
-									if(lef_widrate > 46 && leftop_cut > 33)
+									if(lef_widrate > 40 && leftop_cut > 33)
 										{state = 22;return;}
 							//	未检测到入环口，判断是否为出环口
 								if(leftop_cut > 33)
 									if(lef_toprate > 70 && lef_botrate > 90)
 										{state = 21; return;}
-								lef_toprate = (topbor[0]-topbor[leftop_cut>>1]);//借用变量存储
-								lef_botrate = (topbor[leftop_cut>>1]-topbor[leftop_cut]);
-								if(lef_toprate*lef_toprate-lef_botrate*lef_botrate < -24)
-									{state = 21;return;}
+//								if(lvet_trafcount)
+//									if(lef_toprate > 10 && lef_botrate > 10)
+//										{state = 21; return;}
 							}
 					}
 	}
@@ -167,10 +183,6 @@ void state_machine(void){
 		if(!exti_lefcount){//只有右边有出口 | 右弯 | 右环 | 十字丢边 | 环道出口
 			if(abs(rtraf_point_row[exti_rigtop] - lcut) < 5)//右弯
 				{state = 14; return;}
-		}
-	if(exti_lefcount)
-		if(exti_rigcount){//两边都有出口 | 十字 | 岔道
-		
 		}
 }
 /*------------------------------*/
@@ -191,6 +203,12 @@ void state_machine_fork(void){
 /*	    	十字状态机			*/
 /*==============================*/
 void state_machine_cross(void){
+	switch(act_flag){
+		case 31:
+			if(state == 32)
+				act_flag = 0, state_flag = 0, img_color = 0xAE9C;
+			return;
+	}
 }
 /*------------------------------*/
 /*	    	环道状态机			*/
@@ -200,6 +218,7 @@ void state_machine_ring(void){
 		case 21://出环口 -> 入环
 			if(state == 22)
 				act_flag = 22, img_color = 0x8CF6;
+				return;
 		case 22://入环 -> 环内
 			if(state == 11 || state == 13)
 				act_flag = 23, yawa_flag = 1, yawa = 0, img_color = 0x46D0;
@@ -275,7 +294,20 @@ void state_machine_enter(void){
 		case 22://检测到圆环入口
 			act_flag = 22, state_flag = 2, img_color = 0x8CF6;
 			return;
+		case 26://检测到圆环出口 | 脆弱状态 | 右
+			act_flag = 26, state_flag = 2, img_color = 0x0250;
+			act_flag_temp = act_flag;
+			tim_interrupt_init_ms(TIM_3, 2000, 0, 0);//状态计时
+			return;
+		case 27://检测到圆环入口 | 右
+			act_flag = 27, state_flag = 2, img_color = 0x8CF6;
+			return;
 	//	十字、十字丢边
+		case 31:
+			act_flag = 31, state_flag = 3, img_color = 0x8D9B;
+			act_flag_temp = act_flag;
+			tim_interrupt_init_ms(TIM_3, 2000, 0, 0);//状态计时
+			return;
 	//	岔道
 		case 41:
 			act_flag = 41, state_flag = 4, img_color = 0xEFBE;
@@ -318,7 +350,7 @@ char slope_cal(char num){
 void vert_width_analysis(char num, unsigned char end_set){
 //	变量定义
 	register char i;
-	char mp[5];
+	unsigned char mp[5];
 	short width[5], top_bias[4], bottom_bias[4];
 	short wic[4]; 
 	short topwic[4], bottomwic[4];
@@ -338,11 +370,24 @@ void vert_width_analysis(char num, unsigned char end_set){
 			lef_widrate = (wic[0]+wic[1]+wic[2]+wic[3])>>2;
 			lef_toprate = (top_bias[0]+top_bias[1]+top_bias[2]+top_bias[3])>>2;
 			lef_botrate = (bottom_bias[0]+bottom_bias[1]+bottom_bias[2]+bottom_bias[3])>>2;
-//			show_value[0] = lef_widrate;
-//			show_value[1] = lef_toprate;
-//			show_value[2] = lef_botrate;
 			break;
 		case 2://右
+			mp[0] = 159, mp[4] = end_set;
+			mp[2] = (mp[0]+mp[4])>>1;
+			mp[1] = (mp[0]+mp[2])>>1, mp[3] = (mp[2]+mp[4])>>1;
+		//	分析宽度变化
+			for(i = 0; i < 5; i++) width[i] = bottombor[mp[i]]-topbor[mp[i]];
+			for(i = 0; i < 4; i++){
+				wic[i] = width[i+1]*width[i+1]-width[i]*width[i];
+				top_bias[i] = topbor[159]*topbor[159]-topbor[mp[i+1]]*topbor[mp[i+1]];
+				bottom_bias[i] = bottombor[159]*bottombor[159]-bottombor[mp[i+1]]*bottombor[mp[i+1]];
+			}
+			rig_widrate = (wic[0]+wic[1]+wic[2]+wic[3])>>2;
+			rig_toprate = (top_bias[0]+top_bias[1]+top_bias[2]+top_bias[3])>>2;
+			rig_botrate = (bottom_bias[0]+bottom_bias[1]+bottom_bias[2]+bottom_bias[3])>>2;
+//			show_value[0] = rig_widrate;
+//			show_value[1] = rig_toprate;
+//			show_value[2] = rig_botrate;
 			break;
 	}
 }
@@ -616,8 +661,8 @@ void border_vertical_leftsearch(void){
 				if(ltraf_flag[i-1] == 0){ 
 					exti_lefp[exti_lefcount] = (ltraf_point_row[i]+ltraf_point_row[i-1])>>1, exti_lefcount++;
 					if(!vetflag){
-						if(i+1 < ltraf_count) {vetflag = 1, exti_leftop = i, lefhigh = ltraf_point_row[i-1] - ltraf_point_row[i];vert_leftsearch(ltraf_point_row[i+1], ltraf_point_row[i-1]+10);}
-						else {vetflag = 1, exti_leftop = i, lefhigh = ltraf_point_row[i-1] - ltraf_point_row[i];vert_leftsearch(ltraf_point_row[i]-7, ltraf_point_row[i-1]+10);}
+						if(i+1 < ltraf_count) {vetflag = 1, exti_leftop = i, lefhigh = ltraf_point_row[i-1] - ltraf_point_row[i];vert_leftsearch(ltraf_point_row[i+1], ltraf_point_row[i-1]+20);}
+						else {vetflag = 1, exti_leftop = i, lefhigh = ltraf_point_row[i-1] - ltraf_point_row[i];vert_leftsearch(ltraf_point_row[i]-7, ltraf_point_row[i-1]+20);}
 					}
 				}
 		}
@@ -644,8 +689,8 @@ void border_vertical_rightsearch(void){
 			if(rtraf_flag[i] == 1){
 				if(rtraf_flag[i-1] == 0) exti_rigp[exti_rigcount] = (rtraf_point_row[i]+rtraf_point_row[i-1])>>1, exti_rigcount++;
 				if(!vetflag){
-					if(i+1 < rtraf_count){vetflag = 1, exti_rigtop = i, righigh = rtraf_point_row[i-1] - rtraf_point_row[i];vert_rightsearch(rtraf_point_row[i+1], rtraf_point_row[i-1]+10);}
-					else {vetflag = 1, exti_rigtop = i, righigh = rtraf_point_row[i-1] - rtraf_point_row[i];vert_rightsearch(rtraf_point_row[i]-7, rtraf_point_row[i-1]+10);}
+					if(i+1 < rtraf_count){vetflag = 1, exti_rigtop = i, righigh = rtraf_point_row[i-1] - rtraf_point_row[i];vert_rightsearch(rtraf_point_row[i+1], rtraf_point_row[i-1]+20);}
+					else {vetflag = 1, exti_rigtop = i, righigh = rtraf_point_row[i-1] - rtraf_point_row[i];vert_rightsearch(rtraf_point_row[i]-7, rtraf_point_row[i-1]+20);}
 				}
 			}
 		}

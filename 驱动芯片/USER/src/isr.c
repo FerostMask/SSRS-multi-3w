@@ -135,6 +135,15 @@ void UART4_IRQHandler(void)
 	if(UART4->ISR & UART_ISR_RX_INTF)												// 串口接收缓冲中断
 	{
 		UART4->ICR |= UART_ICR_RXICLR;												// 清除中断标志位
+		uart_getchar(UART_4, &subuff_arr[subuff_num]);
+		if(subuff_arr[0]!=0xA7) subuff_num = 0;
+		else subuff_num++;
+		if(subuff_num == 3){
+			subuff_num = 0;
+			if(subuff_arr[2] == 0x12)
+				if(subuff_arr[1] == 0xB9)
+					uart_putchar(UART_7, 255);
+		}
 	}
 }
 
