@@ -62,7 +62,7 @@ extern short spd_slow;
 extern short spd, rad;
 extern short rad_temp, rad_min, rad_max;
 extern unsigned char folrow_f;
-extern char folc_flag, cooling_flag;
+extern char folc_flag, cooling_flag, ring_out_flag;
 extern void(*ctrl_pfc[])(void);
 //	结构体声明
 typedef struct spdpara{

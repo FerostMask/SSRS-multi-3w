@@ -230,7 +230,7 @@ void state_machine_ring(void){
 		case 24://出环 -> 环外
 			if(state == 24)
 				act_flag = 0, yawa_flag = 0, state_flag = 0, img_color = 0xAE9C;
-				cooling_flag = 1;
+				cooling_flag = 1, ring_out_flag = 1;
 				tim_interrupt_init_ms(TIM_3, 3000, 0, 0);
 			return;
 	}

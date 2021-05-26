@@ -150,4 +150,13 @@ void cam_ctrl_direct(void){
 		bias_temp += (lefbor[30+(i<<2)]+rigbor[30+(i<<2)] - 160)*bend_bias[i];
 	p_target[1] = (bias_temp>>7)+80;
 	folc_flag = 0;
+//	特殊控制
+	if(lvet_trafcount)
+		p_target[1] = (lefbor[lvet_trafpoint_row[0]]+rigbor[lvet_trafpoint_row[0]])>>1;
+//	环岛控制
+	if(ring_out_flag == 1){
+		if(found_point[0] < 60)
+			p_target[1] = (lefbor[found_point[0]-10]+rigbor[found_point[0]-10])>>1;
+		spd = 30;
+	}
 }

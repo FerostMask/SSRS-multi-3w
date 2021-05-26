@@ -57,7 +57,7 @@ short spd_slow;
 short spd, rad;
 short rad_temp, rad_min, rad_max;
 unsigned char folrow_f = 63;
-char folc_flag, cooling_flag;
+char folc_flag, cooling_flag, ring_out_flag = 0;
 void(*ctrl_pfc[])(void) = {cam_ctrl_direct, cam_ctrl_bend, cam_ctrl_ring, cam_ctrl_cross, cam_ctrl_fork};
 /*----------------------*/
 /*	 	 菜单模块		*/
@@ -116,5 +116,4 @@ void Init_para(void){
 	cam_steering.Kd = 1.1;	
 //	电磁模块
 	adc2.max = 4095, adc2.min = 0;
-
 }

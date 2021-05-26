@@ -81,7 +81,7 @@ void TIM3_IRQHandler (void)
 	uint32 state = TIM3->SR;														// ¶ÁÈ¡ÖĞ¶Ï×´Ì¬
 	TIM3->SR &= ~state;																// Çå¿ÕÖĞ¶Ï×´Ì¬
 //	×´Ì¬ÀäÈ´
-	cooling_flag = 0;
+	cooling_flag = 0, ring_out_flag = 0;
 //	´àÈõ×´Ì¬
 	if(act_flag_temp == act_flag) act_flag = 0, state_flag = 0, img_color = 0xAE9C;
 	fragile_flag = 0;
