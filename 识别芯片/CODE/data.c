@@ -105,15 +105,15 @@ struct adcpara adc2;
 /*======================*/
 void Init_para(void){
 //	速度控制
-	speed.direct = 62;
-	speed.bend[0] = 62, speed.bend[1] = 62;
-	speed.ring[0] = 45, speed.ring[1] = 50;
-	speed.ring[2] = 50, speed.ring[3] = 45, speed.ring[4] = 60;
-	speed.cross = 60;
-	speed.fork = 50;
+	speed.direct = 40;
+	speed.bend[0] = 40, speed.bend[1] = 40;
+	speed.ring[0] = 40, speed.ring[1] = 40;
+	speed.ring[2] = 40, speed.ring[3] = 40, speed.ring[4] = 60;
+	speed.cross = 40;
+	speed.fork = 40;
 //	CAM转向
-	cam_steering.Kp = 0.9;
-	cam_steering.Kd = 1.1;	
+	cam_steering.Kp = 0.7;
+	cam_steering.Kd = 1.0;	
 //	电磁模块
 	adc2.max = 4095, adc2.min = 0;
 }
